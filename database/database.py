@@ -38,7 +38,8 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             asset_id TEXT,
-            severity TEXT,
+            previous_status,
+            new_status,
             message TEXT,
             timestamp TEXT
         )
@@ -236,7 +237,8 @@ def get_health_reports():
 
 def insert_event(
     asset_id,
-    severity,
+    previous_status,
+    new_status,
     message,
     timestamp
 ):
@@ -247,11 +249,12 @@ def insert_event(
 
     cursor.execute("""
         INSERT INTO events
-        (asset_id, severity, message, timestamp)
-        VALUES (?, ?, ?, ?)
+        (asset_id, previous_status, new_status, message, timestamp)
+        VALUES (?, ?, ?, ? , ?)
 """, (
     asset_id,
-    severity,
+    previous_status,
+    new_status,
     message,
     timestamp
 ))

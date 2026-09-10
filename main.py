@@ -130,7 +130,7 @@ def run_monitoring_cycle():
 def analyze_transformer_health(
         asset_id, 
         transformer_data,
-        previous_health_status
+        previous_status
 ):
 
     average_voltage = get_average_metric(
@@ -157,9 +157,9 @@ def analyze_transformer_health(
 
     temps = temps[::-1]
 
-    if len(temps) >= 5:
+    increasing = 0
 
-        increasing = 0
+    if len(temps) >= 5:
 
         for i in range(len(temps) - 1):
 
@@ -173,10 +173,11 @@ def analyze_transformer_health(
         increasing
     )
 
-    if health_status != "previous_health_status":
+    if health_status != previous_status:
 
         insert_event(
             asset_id,
+            previous_status,
             health_status,
             health_reason,
             str(transformer_data["timestamp"])
@@ -293,6 +294,14 @@ while True:
             health_reason,
             temps
         )
+
+        events = get_events()
+
+        print()
+        print("===== EVENT HISTORY =====")
+
+        for event in events:
+            print(event)
 
     time.sleep(2)
 

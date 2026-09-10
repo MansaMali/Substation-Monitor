@@ -6,10 +6,10 @@
 [x] Health Scoring
 [x] trend analysis
 [x] health history
-[] Event system
+[x] Event system
 
 Phase 2 
-[] Console dashboard
+[!] Console dashboard
 [] Alarm Manager
 
 Phase 3 
