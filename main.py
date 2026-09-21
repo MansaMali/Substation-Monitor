@@ -21,8 +21,106 @@ from database.database import get_events
 
 from health_monitor import evaluate_transformer_health
 
+def display_operator_dashboard(
 
-def display_health_report(
+    transformer_data,
+    breaker_data,
+    capacitor_data,
+    dashboard_health
+):
+    
+    print()
+    print("=" * 50)
+    print(" SUBSTATION OPERATOR DASHBOARD")
+    print("=" * 50)
+
+    normal_count = 0
+    warning_count = 0
+    critical_count = 0
+
+    for health in dashboard_health.values():
+
+        if health["status"] == "NORMAL":
+            normal_count += 1
+
+        elif health["status"] == "WARNING":
+            warning_count += 1
+
+        elif health["status"] == "CRITICAL":
+                    critical_count += 1
+
+    if critical_count > 0:
+        system_status = "CRITICAL"
+
+    elif warning_count > 0:
+        system_status = "WARNING"
+
+    else: 
+        system_status = "NORMAL"
+
+    print()
+    print(f"SYSTEM STATUS: {system_status}")
+
+    print()
+    print(f"NORMAL: {normal_count}")
+    print(f"WARNNG: {warning_count}")
+    print(f"CRITICAL: {critical_count}")
+
+    print()
+    print("ACTIVE ALARMS")
+    print("-" * 50)
+
+    for asset_id, health in dashboard_health.items():
+
+        if health["status"] != "NORMAL":
+
+            print(
+                f"{asset_id} | "
+                f"{health['status']} | "
+                f"{health['reason']} | "
+            )
+
+    print()
+    print("TRANSFORMERS")
+    print("-" * 50)
+
+    for transformer in transformer_data:
+
+        asset_id = transformer["asset_id"]
+
+        health = dashboard_health.get(asset_id)
+
+        print(
+            f"{asset_id} | "
+            f"Temp: {transformer['temperature']} F | "
+            f"Load: {transformer['load_percent']}% | "
+            f"Voltage: {transformer['voltage']} V | "
+            f"Status: {health['status']}"
+        )
+    print()
+    print("BREAKERS")
+    print("-" * 50)
+
+    for breaker in breaker_data:
+        print(
+            f"{breaker['asset_id']} | "
+            f"Status: {breaker['status']} | "
+            f"Current: {breaker['current']} A"
+        )
+    print()
+    print("CAPACITOR BANKS")
+    print("-" * 50)
+
+    for capacitor in capacitor_data:
+        print(
+            f"{capacitor['asset_id']} | "
+            f"Status: {capacitor['status']} | "
+            f"Reactive Power: {capacitor['reactive_power']} kvar"
+        )
+
+
+
+def display_health_report( 
         asset_id,
         average_voltage,
         max_temperature,
@@ -45,6 +143,8 @@ def display_health_report(
     print()
     print("Latest Temperatures:")
     print(temps    )
+
+
 
 def run_monitoring_cycle(): 
     #update equipment
@@ -236,6 +336,9 @@ while True:
 
     transformer_data, breaker_data, capacitor_data = run_monitoring_cycle()
 
+    dashboard_health = {}
+
+
     print("===== TRANSFORMERS =====")
 
     for data in transformer_data:
@@ -284,6 +387,13 @@ while True:
 
         previous_health_status[asset_id] = health_status
 
+        dashboard_health[asset_id] = {
+
+            "status": health_status,
+            "score": health_score,
+            "reason": health_reason
+        }
+
         display_health_report(
             asset_id,
             average_voltage,
@@ -295,13 +405,20 @@ while True:
             temps
         )
 
-        events = get_events()
+    display_operator_dashboard(
+            transformer_data,
+            breaker_data,
+            capacitor_data,
+            dashboard_health
+    )
 
-        print()
-        print("===== EVENT HISTORY =====")
+    events = get_events()
 
-        for event in events:
-            print(event)
+    print()
+    print("===== EVENT HISTORY =====")
+
+    for event in events:
+        print(event)
 
     time.sleep(2)
 
