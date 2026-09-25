@@ -79,4 +79,15 @@ Completed: Added an overall system status to view total amount of events.
 
 Lessons learned:Adding a counter and linking that coutner to display_health which contains the collected events needed, can give an operator dashboard a cleaner and more effective way at looking at problems that need to be addressed. Adding an active alarm system allows the dashboard to be even cleaner by keeping alarms up until they are cleared instwad on constatly filling the dashboard with events.  .values() only gives the value of a dictionary, while .items() gives the key and value of that dictionary (Side note: .keys() return only the key)
 
-Next session:
+Next session: Real Alarm management system
+
+
+2026-09-24 
+
+Goal: Implement a realistic alarm management system that distinguishes between the different states of an alarm from created, active, acknowledged and cleared.
+
+Completed: Added a alarm managment system that include new alarm, cleared,
+
+Lessons Learned: Created an active alarm dictionary to allow it to be filled with health_status, health_reason under dashboard_health dictionary. the active alarm will create a table if no active alarm is up and if status != normal. adding feautures like new alarm and cleared alarm took some time due to trying to test whether the added code to clear the alarm works. I was dealing with the random numbers and aggregate functions used to simulate these conditions was causing the values to increase due to incorrect configuration of that code (will revise at future point) Good tip is to clear substation.db and run the code again until it can produce the correct new alarm and clear. (PATIENCE IN TESTING)
+
+Next Session

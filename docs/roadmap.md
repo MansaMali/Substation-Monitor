@@ -9,8 +9,8 @@
 [x] Event system
 
 Phase 2 
-[!] Console dashboard
-[] Alarm Manager
+[X] Console dashboard
+[!] Alarm Manager
 
 Phase 3 
 [] Flask Web Dashboard

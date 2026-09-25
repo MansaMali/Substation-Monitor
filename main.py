@@ -332,6 +332,8 @@ previous_health_status = {
     for transformer in transformers
 }
 
+active_alarms = {}
+
 while True:
 
     transformer_data, breaker_data, capacitor_data = run_monitoring_cycle()
@@ -393,6 +395,28 @@ while True:
             "score": health_score,
             "reason": health_reason
         }
+
+        if health_status != "NORMAL":
+
+            if asset_id not in active_alarms:
+
+                active_alarms[asset_id] = {
+
+                    "status": health_status,
+                    "reason": health_reason
+                }
+
+                print()
+                print(f"NEW ALARM: {asset_id}")
+
+        if health_status == "NORMAL":
+
+            if asset_id in active_alarms:
+
+                del active_alarms[asset_id]
+
+                print()
+                print(f"ALARM CLEARED: {asset_id}")
 
         display_health_report(
             asset_id,
