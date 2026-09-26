@@ -26,7 +26,8 @@ def display_operator_dashboard(
     transformer_data,
     breaker_data,
     capacitor_data,
-    dashboard_health
+    dashboard_health,
+    active_alarms
 ):
     
     print()
@@ -70,15 +71,15 @@ def display_operator_dashboard(
     print("ACTIVE ALARMS")
     print("-" * 50)
 
-    for asset_id, health in dashboard_health.items():
+    for asset_id, alarm in active_alarms.items():
 
-        if health["status"] != "NORMAL":
+        print(
+            f"{asset_id} | "
+            f"{alarm['status']} |"
+            f"{alarm['reason']}"
+        )
 
-            print(
-                f"{asset_id} | "
-                f"{health['status']} | "
-                f"{health['reason']} | "
-            )
+
 
     print()
     print("TRANSFORMERS")
@@ -312,6 +313,11 @@ transformers = [
     Transformer("TX-103")
     ]
 
+transformers[0].simulation_mode = "NORMAL"
+transformers[1].simulation_mode = "OVERLOAD"
+transformers[2].simulation_mode = "NORMAL"
+
+
 breakers = [
     Breaker("BR-101"),
     Breaker("BR-102"),
@@ -333,6 +339,8 @@ previous_health_status = {
 }
 
 active_alarms = {}
+
+simulation_mode = "NORMAL"
 
 while True:
 
@@ -433,7 +441,8 @@ while True:
             transformer_data,
             breaker_data,
             capacitor_data,
-            dashboard_health
+            dashboard_health,
+            active_alarms
     )
 
     events = get_events()

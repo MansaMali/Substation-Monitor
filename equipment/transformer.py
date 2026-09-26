@@ -13,14 +13,70 @@ class Transformer:
 
         self.load_percent = 50
 
+        self.simulation_mode = "NORMAL"
+
+        self.scenario_cycles = 0
+
+
+
     def update(self):
-        self.voltage += random.randint(-15,15)
 
-        self.current += random.randint(-3,3)
+        self.scenario_cycles += 1
 
-        self.temperature += random.randint(-10, 30)
+        print(
+            f"{self.asset_id} | "
+            f"Mode: {self.simulation_mode} | "
+            f"Cycles: {self.scenario_cycles}  "
+        )
 
-        self.load_percent += random.randint(-10, 50)
+        if self.simulation_mode == "NORMAL":
+        
+        
+            self.voltage += random.randint(-15,15)
+
+            self.current += random.randint(-3,3)
+
+            self.temperature += random.randint(-5, 5)
+
+            self.load_percent += random.randint(-5, 5)
+
+
+        elif self.simulation_mode == "OVERLOAD":
+                
+            self.voltage += random.randint(-15,15)
+        
+            self.current += random.randint(2,8)
+            
+            self.temperature += random.randint(2, 6)
+            
+            self.load_percent += random.randint(3, 8)
+
+            if self.temperature > 105:
+                self.temperature = 102
+
+            if self.load_percent > 110:
+                self.load_percent = 105
+
+            if self.scenario_cycles >= 10:
+
+                self.simulation_mode = "RECOVERY"
+
+                self.scenario_cycles = 0
+
+                print(f"{self.asset_id} entering RECOVERY mode")
+
+        elif self.simulation_mode == "RECOVERY":
+                
+                
+            self.voltage += random.randint(-15,15)
+    
+            self.current += random.randint(-5,2)
+        
+            self.temperature += random.randint(-5, -1)
+        
+            self.load_percent += random.randint(-5, -1)
+
+
 
     def get_telemetry(self):
             return {

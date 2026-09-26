@@ -90,4 +90,22 @@ Completed: Added a alarm managment system that include new alarm, cleared,
 
 Lessons Learned: Created an active alarm dictionary to allow it to be filled with health_status, health_reason under dashboard_health dictionary. the active alarm will create a table if no active alarm is up and if status != normal. adding feautures like new alarm and cleared alarm took some time due to trying to test whether the added code to clear the alarm works. I was dealing with the random numbers and aggregate functions used to simulate these conditions was causing the values to increase due to incorrect configuration of that code (will revise at future point) Good tip is to clear substation.db and run the code again until it can produce the correct new alarm and clear. (PATIENCE IN TESTING)
 
-Next Session
+Next Session: Make the dashboard use active_alarms
+
+
+2026-09-25:
+
+
+Goal: Make the dashboard make use of active_alarms section to allow for an alarm severity feature. currently it just shows a cleared state when it goes to normal. This makes for better state tracking, instead of what is != normal it now shows what alarms are currently active.
+
+Create a new controlled simulator for better testing
+
+
+lessons learned: Seperation of responsibilities when it comes to how some functions are used and recreated to have cleaner architecture. for example, allowing the dashboard to show the output of active alarms instead of coming from health. health had the same type of code if != normal then show status and reason. however our active alarms already contained this type of feature. instead of having two seperated feautures doing the same thing I replaced it with a call to active alarms, and parsed active alarms within the def dashboard and its call.
+
+my attempt at creating a controlled simulator led to the first iteration being stability. I changed values of the randint to a smaller range and the simulation stopped increasing exponentially. then I created a new update inside tranformer.py to simulate normal, overload, and recovery numbers. this was accomplished by putting simulation_mode inside the init class and make three new simulation_mode normal,recovery,etc.  inside update function. then we call that inside main.py where I set up the equipment by adding transformers[0].simulation_mode=normal and set one for each transformer so I can control what simulation feature I want to see. next was the implementation of the limit. by placing an if temp < 100 it stops the temp from rising to exponetial heights and allows for better testing environment. 
+
+creating scenario cycle to allow program to run without continously stopping and resarting, 
+this was accomlplished by adding self.scenario_cycle = 0 otherwise known as a counter. then I set up a if scenario >= 10: enter recovery mode, then from recovery mode it enters normal mode. the testing involed making sure eac iteration worked before adding another feature. first I tested to make sure cycles poped up in the terminal, after that I had to investigate whether the cycle would automatically go thorugh all the iteration and print the required messages. such as alarm clear when it reaches normal.
+
+Next session: Finish the scenario cycle by allowing full transition into each mode, then add an event managment system to record all alarms and changes.
